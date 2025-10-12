@@ -195,7 +195,14 @@ const StageHeaderComponent = function (props) {
             <Box
                 className={styles.stageHeaderWrapper}
                 // + 2 px because the stage will have 2 pixels of border around it
-                style={{minWidth: `${stageDimensions.width + 2}px`}}
+                style={{minWidth: `${
+                    stageSize === STAGE_DISPLAY_SIZES.constrained
+                        ? STAGE_DISPLAY_SCALE_METADATA.constrained.scale * Math.max(stageDimensions.widthDefault, FIXED_WIDTH) + 2
+                        : (stageSizeMode === STAGE_SIZE_MODES.full || stageSizeMode === STAGE_SIZE_MODES.large) && stageDimensions.width <= FIXED_WIDTH
+                            ? FIXED_WIDTH + 2
+                            : stageDimensions.width + 2
+                    }px`
+                }}
             >
                 <Box className={styles.stageMenuWrapper}>
                     <Controls
