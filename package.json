@@ -34,7 +34,7 @@
   "dependencies": {
     "@microbit/microbit-universal-hex": "0.2.2",
     "@turbowarp/jszip": "^3.11.1",
-    "@turbowarp/nanolog": "^0.2.0",
+    "@turbowarp/nanolog": "^1.0.1",
     "@turbowarp/scratch-l10n": "^3.1001.0-202401241456-994097a5",
     "@turbowarp/scratch-storage": "^0.0.202505311821",
     "@turbowarp/scratch-svg-renderer": "^1.0.0-202312242305-12c360b",
