@@ -140,7 +140,8 @@ const SECURITY_MANAGER_METHODS = [
     'canNotify',
     'canGeolocate',
     'canEmbed',
-    'canDownload'
+    'canDownload',
+    'canEditFile'
 ];
 
 class TWSecurityManagerComponent extends React.Component {
@@ -432,6 +433,17 @@ class TWSecurityManagerComponent extends React.Component {
         const {showModal} = await this.acquireModalLock();
         return showModal(SecurityModals.Download, {
             url,
+            name
+        });
+    }
+
+    async canEditFile (name) {
+        const parsed = parseURL(url, FETCHABLE_PROTOCOLS);
+        if (!parsed) {
+            return false;
+        }
+        const {showModal} = await this.acquireModalLock();
+        return showModal(SecurityModals.fileEdit, {
             name
         });
     }

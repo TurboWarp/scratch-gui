@@ -1,0 +1,23 @@
+.file-name {
+    font-family: monospace;
+    user-select: text;
+    word-wrap: break-word;
+}
+.file-name::before {
+    content: '"';
+}
+.file-name::after {
+    content: '"';
+}
+
+.name {
+
+}
+
+.dot {
+
+}
+
+.extension {
+    text-decoration: underline;
+}
