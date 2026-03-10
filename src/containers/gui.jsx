@@ -40,6 +40,9 @@ import GUIComponent from '../components/gui/gui.jsx';
 import {setIsScratchDesktop} from '../lib/isScratchDesktop.js';
 import TWFullScreenResizerHOC from '../lib/tw-fullscreen-resizer-hoc.jsx';
 import TWThemeManagerHOC from './tw-theme-manager-hoc.jsx';
+import CollabCursors from '../components/collab-cursors/collab-cursors.jsx';
+import CollabChat from '../components/collab-chat/collab-chat.jsx';
+import {CollabClient} from '../lib/collab-client.js';
 
 const {RequestMetadata, setMetadata, unsetMetadata} = storage.scratchFetch;
 
@@ -55,6 +58,77 @@ const setProjectIdMetadata = projectId => {
 
 class GUI extends React.Component {
     componentDidMount () {
+        const userName = prompt('ユーザー名を入力してください') || 'ユーザー';
+        this.collabClient = new CollabClient('https://collab-server-ttdi.onrender.com', userName);
+        this.collabClient.onCursorsChange = (cursors) => this.setState({collabCursors: cursors});
+        this.setState({collabCursors: {}});
+        // 他ユーザーのプロジェクト変更を受信して適用
+        this.collabClient.onProjectUpdate = (json) => {
+            if (vm && !this._applyingRemoteChange) {
+                try {
+                    this._applyingRemoteChange = true;
+                    vm.loadProject(json).then(() => {
+                        setTimeout(() => {
+                            this._applyingRemoteChange = false;
+                        }, 100);
+                    });
+                } catch(err) {
+                    this._applyingRemoteChange = false;
+                    console.log('project sync error:', err);
+                }
+            }
+        };
+
+        // VMをwindowに保存してアクセスできるようにする
+        const vm = this.props.vm;
+        window.__vm = vm;
+
+        // プロジェクトの変更を同期
+        this._applyingRemoteChange = false;
+        if (vm) {
+            vm.on('PROJECT_CHANGED', () => {
+                if (this.collabClient && !this._applyingRemoteChange) {
+                    const json = vm.toJSON();
+                    this.collabClient.socket.emit('project-update', json);
+                }
+            });
+        }
+
+        document.addEventListener('mousemove', (e) => {
+            if (this.collabClient) this.collabClient.sendCursor(e.clientX, e.clientY);
+        });
+
+        // ブロッククリック時にロックを要求
+        document.addEventListener('mousedown', (e) => {
+            const blockEl = e.target.closest('.blocklyDraggable');
+            if (!blockEl) return;
+            const blockId = blockEl.getAttribute('data-id') || blockEl.id || null;
+            if (!blockId) return;
+            if (this.collabClient.locks[blockId]) {
+                e.stopPropagation();
+                e.preventDefault();
+                const toast = document.createElement('div');
+                toast.textContent = '他のユーザーが編集中です！';
+                toast.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#e74c3c;color:white;padding:10px 20px;border-radius:8px;z-index:99999;font-size:14px;';
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 2000);
+                return;
+            }
+            this.collabClient.requestLock(blockId, (granted) => {
+                if (!granted) {
+                    const toast = document.createElement('div');
+                    toast.textContent = '他のユーザーが編集中です！';
+                    toast.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#e74c3c;color:white;padding:10px 20px;border-radius:8px;z-index:99999;font-size:14px;';
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 2000);
+                }
+            });
+        }, true);
+
+        // マウスを離したらロック解除
+        document.addEventListener('mouseup', () => {
+            if (this.collabClient) this.collabClient.releaseAllMyLocks();
+        }, true);
         setIsScratchDesktop(this.props.isScratchDesktop);
         this.props.onStorageInit(storage);
         this.props.onVmInit(this.props.vm);
@@ -99,12 +173,16 @@ class GUI extends React.Component {
             ...componentProps
         } = this.props;
         return (
+            <div style={{position: 'relative'}}>
+            <CollabCursors cursors={this.state ? this.state.collabCursors : {}} />
+            <CollabChat collabClient={this.collabClient} />
             <GUIComponent
                 loading={fetchingProject || isLoading || loadingStateVisible}
                 {...componentProps}
             >
                 {children}
             </GUIComponent>
+            </div>
         );
     }
 }
