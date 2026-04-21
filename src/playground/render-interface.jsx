@@ -138,21 +138,21 @@ const Footer = () => (
                     <a href="https://docs.turbowarp.org/embedding">
                         <FormattedMessage
                             defaultMessage="Embedding"
-                            description="Link in footer to embedding documentation for embedding link"
+                            description="Link in footer to embedding documentation for embedding link (turbowarp)"
                             id="tw.footer.embed"
                         />
                     </a>
                     <a href="https://docs.turbowarp.org/url-parameters">
                         <FormattedMessage
                             defaultMessage="URL Parameters"
-                            description="Link in footer to URL parameters documentation"
+                            description="Link in footer to URL parameters documentation (turbowarp)"
                             id="tw.footer.parameters"
                         />
                     </a>
                     <a href="https://docs.turbowarp.org/">
                         <FormattedMessage
                             defaultMessage="Documentation"
-                            description="Link in footer to additional documentation"
+                            description="Link in footer to additional documentation (turbowarp)"
                             id="tw.footer.documentation"
                         />
                     </a>
@@ -161,11 +161,11 @@ const Footer = () => (
                     <a href="https://scratch.mit.edu/users/GarboMuffin/#comments">
                         <FormattedMessage
                             defaultMessage="Feedback & Bugs"
-                            description="Link to feedback/bugs page"
+                            description="Link to feedback/bugs page (turbowarp)"
                             id="tw.feedback"
                         />
                     </a>
-                    <a href="https://github.com/TurboWarp/">
+                    <a href="https://github.com/mintblocks">
                         <FormattedMessage
                             defaultMessage="Source Code"
                             description="Link to source code"
