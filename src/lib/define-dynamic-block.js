@@ -89,7 +89,6 @@ const defineDynamicBlock = (ScratchBlocks, categoryInfo, staticBlockInfo, extend
         }
 
         // Layout block arguments
-        // TODO handle ArgumentType.IMAGE
         // TODO handle E/C Blocks
         const blockText = blockInfo.text;
         const args = [];
@@ -109,6 +108,15 @@ const defineDynamicBlock = (ScratchBlocks, categoryInfo, staticBlockInfo, extend
                 break;
             case ArgumentType.BOOLEAN:
                 args.push({type: 'input_value', name: argName, check: 'Boolean'});
+                break;
+            case ArgumentType.IMAGE:
+                args.push({
+                    type: 'field_image',
+                    src: arg.dataURI || '',
+                    width: 24,
+                    height: 24,
+                    flip_rtl: arg.flipRTL || false
+                });
                 break;
             }
             return `%${++argCount}`;
