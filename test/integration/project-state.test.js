@@ -45,7 +45,8 @@ describe('Project state', () => {
 
     test('project_title parameter', async () => {
         const title = `title${Date.now()}`;
-        await loadUri(`${uri}?project_title=${title}`);
+        const editor_uri = path.join(uri, './editor.html');
+        await loadUri(`${editor_uri}?project_title=${title}`);
         await clickXpath(`//input[@value="${title}"]`);
     });
 });
