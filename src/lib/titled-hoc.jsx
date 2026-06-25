@@ -51,7 +51,10 @@ const TitledHOC = function (WrappedComponent) {
             let newTitle = requestedTitle;
             let isDefault = false;
             if (newTitle === null || typeof newTitle === 'undefined') {
-                newTitle = this.props.intl.formatMessage(messages.defaultProjectTitle);
+                newTitle = (
+                    typeof URLSearchParams !== 'undefined' &&
+                    new URLSearchParams(location.search).get('project_title')
+                ) || this.props.intl.formatMessage(messages.defaultProjectTitle);
                 isDefault = true;
             }
             this.props.onChangedProjectTitle(newTitle, isDefault);
