@@ -33,8 +33,8 @@ const TitledHOC = function (WrappedComponent) {
             // if project is a new default project, and has loaded,
             if (this.props.isShowingWithoutId && prevProps.isAnyCreatingNewState) {
                 // reset title to default
-                const defaultProjectTitle = this.handleReceivedProjectTitle();
-                this.props.onUpdateProjectTitle(defaultProjectTitle, true);
+                const {title, isDefault} = this.handleReceivedProjectTitle();
+                this.props.onUpdateProjectTitle(title, isDefault);
             }
             // if the projectTitle hasn't changed, but the reduxProjectTitle
             // HAS changed, we need to report that change to the projectTitle's owner
@@ -51,14 +51,21 @@ const TitledHOC = function (WrappedComponent) {
             let newTitle = requestedTitle;
             let isDefault = false;
             if (newTitle === null || typeof newTitle === 'undefined') {
-                newTitle = (
-                    typeof URLSearchParams !== 'undefined' &&
-                    new URLSearchParams(location.search).get('project_title')
-                ) || this.props.intl.formatMessage(messages.defaultProjectTitle);
-                isDefault = true;
+                const urlTitle = typeof URLSearchParams !== 'undefined' &&
+                    new URLSearchParams(location.search).get('project_title');
+                if (urlTitle) {
+                    // a title provided via the URL is a real title, not the default
+                    newTitle = urlTitle;
+                } else {
+                    newTitle = this.props.intl.formatMessage(messages.defaultProjectTitle);
+                    isDefault = true;
+                }
             }
             this.props.onChangedProjectTitle(newTitle, isDefault);
-            return newTitle;
+            return {
+                title: newTitle,
+                isDefault
+            };
         }
         render () {
             const {
