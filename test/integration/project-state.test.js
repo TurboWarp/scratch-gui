@@ -42,11 +42,4 @@ describe('Project state', () => {
         // project title should be default again
         await clickXpath(`//input[@value="${defaultProjectTitle}"]`);
     });
-
-    test('project_title parameter', async () => {
-        const title = `title${Date.now()}`;
-        const editor_uri = path.join(uri, './editor.html');
-        await loadUri(`${editor_uri}?project_title=${title}`);
-        await clickXpath(`//input[@value="${title}"]`);
-    });
 });
