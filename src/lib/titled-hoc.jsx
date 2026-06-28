@@ -54,7 +54,6 @@ const TitledHOC = function (WrappedComponent) {
                 const urlTitle = typeof URLSearchParams !== 'undefined' &&
                     new URLSearchParams(location.search).get('project_title');
                 if (urlTitle) {
-                    // a title provided via the URL is a real title, not the default
                     newTitle = urlTitle;
                 } else {
                     newTitle = this.props.intl.formatMessage(messages.defaultProjectTitle);
