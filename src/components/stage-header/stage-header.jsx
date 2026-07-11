@@ -9,8 +9,8 @@ import Box from '../box/box.jsx';
 import Button from '../button/button.jsx';
 import ToggleButtons from '../toggle-buttons/toggle-buttons.jsx';
 import Controls from '../../containers/controls.jsx';
-import {getStageDimensions} from '../../lib/screen-utils';
-import {STAGE_DISPLAY_SIZES, STAGE_SIZE_MODES, STAGE_DISPLAY_SCALE_METADATA, FIXED_WIDTH} from '../../lib/layout-constants';
+import {getStageDimensions, getMinWidth} from '../../lib/screen-utils';
+import {STAGE_DISPLAY_SIZES, STAGE_SIZE_MODES} from '../../lib/layout-constants';
 
 import fullScreenIcon from './icon--fullscreen.svg';
 import unFullScreenIcon from './icon--unfullscreen.svg';
@@ -195,14 +195,7 @@ const StageHeaderComponent = function (props) {
             <Box
                 className={styles.stageHeaderWrapper}
                 // + 2 px because the stage will have 2 pixels of border around it
-                style={{minWidth: `${
-                    stageSize === STAGE_DISPLAY_SIZES.constrained
-                        ? STAGE_DISPLAY_SCALE_METADATA.constrained.scale * Math.max(stageDimensions.widthDefault, FIXED_WIDTH) + 2
-                        : (stageSizeMode === STAGE_SIZE_MODES.full || stageSizeMode === STAGE_SIZE_MODES.large) && stageDimensions.width <= FIXED_WIDTH
-                            ? FIXED_WIDTH + 2
-                            : stageDimensions.width + 2
-                    }px`
-                }}
+                style={{minWidth: `${Math.max(stageDimensions.width, getMinWidth(stageSize)) + 2}px`}}
             >
                 <Box className={styles.stageMenuWrapper}>
                     <Controls
