@@ -27,10 +27,26 @@
     object-fit: contain;
 }
 
-.lesson {
+.lesson-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.lesson-number {
     font-size: 14px;
-    font-weight: 600;
+    font-weight: 700;
+    color: #17233c;
+}
+
+.lesson-title {
+    font-size: 12px;
     color: #68758a;
+}
+
+.primary-button:disabled {
+    cursor: default;
+    opacity: 0.45;
 }
 
 .actions {
@@ -78,4 +94,10 @@
 .status-disconnected {
     background: #eef2f7;
     color: #596579;
+}
+
+.button:disabled,
+.primary-button:disabled {
+    cursor: default;
+    opacity: 0.45;
 }

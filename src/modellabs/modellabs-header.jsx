@@ -1,14 +1,12 @@
 import React, {useEffect, useState} from 'react';
 
+import {getCurrentLesson} from './lesson-config';
 import logo from './logo.jpg';
 import styles from './modellabs-header.css';
 
-const getLessonId = () => {
-    const params = new URLSearchParams(window.location.search);
-    return params.get('lesson') || 'les-01';
-};
-
 const ModellabsHeader = () => {
+    const lesson = getCurrentLesson();
+
     const [deviceState, setDeviceState] = useState({
         connected: false,
         firmwareVersion: '',
@@ -33,6 +31,17 @@ const ModellabsHeader = () => {
         };
     }, []);
 
+    const goToLesson = lessonId => {
+        if (!lessonId) {
+            return;
+        }
+
+        const url = new URL(window.location.href);
+
+        url.searchParams.set('lesson', lessonId);
+        window.location.assign(url.toString());
+    };
+
     const statusText = deviceState.connected ?
         `Verbonden · v${deviceState.firmwareVersion}` :
         'Apparaat niet verbonden';
@@ -45,12 +54,26 @@ const ModellabsHeader = () => {
                     src={logo}
                 />
 
-                <div className={styles.lesson}>
-                    {getLessonId()}
+                <div className={styles.lessonInfo}>
+                    <div className={styles.lessonNumber}>
+                        {lesson.number}
+                    </div>
+
+                    <div className={styles.lessonTitle}>
+                        {lesson.title}
+                    </div>
                 </div>
             </div>
 
             <div className={styles.actions}>
+                <button
+                    className={styles.button}
+                    disabled={!lesson.previous}
+                    onClick={() => goToLesson(lesson.previous)}
+                >
+                    Terug
+                </button>
+
                 <span
                     className={`${styles.status} ${
                         deviceState.connected ?
@@ -65,7 +88,11 @@ const ModellabsHeader = () => {
                     Opslaan
                 </button>
 
-                <button className={styles.primaryButton}>
+                <button
+                    className={styles.primaryButton}
+                    disabled={!lesson.next}
+                    onClick={() => goToLesson(lesson.next)}
+                >
                     Volgende
                 </button>
             </div>
