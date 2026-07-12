@@ -1,0 +1,81 @@
+.header {
+    height: 64px;
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 22px;
+
+    background: #ffffff;
+    border-bottom: 1px solid #d9e2ee;
+
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo {
+    width: 150px;
+    height: auto;
+    display: block;
+    object-fit: contain;
+}
+
+.lesson {
+    font-size: 14px;
+    font-weight: 600;
+    color: #68758a;
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.status {
+    padding: 8px 12px;
+
+    border-radius: 18px;
+    background: #eef2f7;
+
+    font-size: 13px;
+    color: #596579;
+}
+
+.button,
+.primary-button {
+    border: 0;
+    border-radius: 8px;
+    padding: 10px 16px;
+
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.button {
+    background: #edf2f8;
+    color: #17233c;
+}
+
+.primary-button {
+    background: #1478d4;
+    color: #ffffff;
+}
+
+.status-connected {
+    background: #e1f7ed;
+    color: #087b55;
+}
+
+.status-disconnected {
+    background: #eef2f7;
+    color: #596579;
+}

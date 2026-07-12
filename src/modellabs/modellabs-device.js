@@ -318,6 +318,18 @@ class ModellabsDevice {
             .trim();
     }
 
+    broadcastState () {
+        window.dispatchEvent(
+            new CustomEvent('modellabs-device-state', {
+                detail: {
+                    connected: this.connected,
+                    firmwareVersion: this.firmwareVersion,
+                    lastError: this.lastError
+                }
+            })
+        );
+    }
+
     async connect () {
         this.lastError = '';
 
@@ -352,6 +364,7 @@ class ModellabsDevice {
             );
 
             this.firmwareVersion = response.split('|')[2] || '';
+            this.broadcastState();
         } catch (error) {
             this.lastError = error && error.message ?
                 error.message :
@@ -397,6 +410,7 @@ class ModellabsDevice {
         this.reader = null;
         this.buffer = '';
         this.rejectPending(new Error('Verbinding verbroken.'));
+        this.broadcastState();
     }
 
     isConnected () {
@@ -560,6 +574,7 @@ class ModellabsDevice {
 
                 this.connected = false;
                 this.rejectPending(error);
+                this.broadcastState();
             }
         }
     }
