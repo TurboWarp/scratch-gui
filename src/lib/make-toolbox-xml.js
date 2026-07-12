@@ -782,6 +782,13 @@ const makeToolboxXML = function (isInitialSetup, isStage = true, targetId, categ
     soundName = xmlEscape(soundName);
 
     categoriesXML = categoriesXML.slice();
+    const modellabsCategory = categoriesXML.find(
+    categoryInfo => categoryInfo.id === 'modellabsdevice'
+    );
+
+    if (modellabsCategory) {
+        return `${xmlOpen}${modellabsCategory.xml}${xmlClose}`;
+    }
     const moveCategory = categoryId => {
         const index = categoriesXML.findIndex(categoryInfo => categoryInfo.id === categoryId);
         if (index >= 0) {

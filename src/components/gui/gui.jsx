@@ -427,7 +427,7 @@ const GUIComponent = props => {
                                     {soundsTabVisible ? <SoundTab vm={vm} /> : null}
                                 </TabPanel>
                             </Tabs>
-                            {backpackVisible ? (
+                            {false && backpackVisible ? (
                                 <Backpack host={backpackHost} />
                             ) : null}
                         </Box>

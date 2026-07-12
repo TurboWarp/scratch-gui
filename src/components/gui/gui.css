@@ -334,3 +334,32 @@ $fade-out-distance: 15px;
     /* overridden by JS; this will be used if the browser can't understand that color */
     background-color: white;
 }
+
+
+
+
+
+/* =========================================================
+   MODELLABS EDITOR
+   Verberg alle onderdelen die leerlingen niet nodig hebben
+   ========================================================= */
+
+.menu-bar-position {
+    display: none;
+}
+
+.tab-list {
+    display: none !important;
+}
+
+.target-wrapper {
+    display: none;
+}
+
+.extension-button-container {
+    display: none;
+}
+
+.watermark {
+    display: none;
+}
