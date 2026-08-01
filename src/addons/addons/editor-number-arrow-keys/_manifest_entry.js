@@ -153,7 +153,54 @@ const manifest = {
           "useCustom": true
         }
       }
-    },
+      },
+      {
+        "dynamic": true,
+        "name": "Change on Ctrl+Key (Cmd on Mac)",
+        "id": "ctrl",
+        "type": "select",
+        "default": "hundredth",
+        "potentialValues": [
+          {
+            "id": "none",
+            "name": "None"
+          },
+          {
+            "id": "hundredth",
+            "name": "0.01"
+          },
+          {
+            "id": "tenth",
+            "name": "0.1"
+          },
+          {
+            "id": "one",
+            "name": "1"
+          },
+          {
+            "id": "ten",
+            "name": "10"
+          }
+        ],
+        "if": {
+          "settings": {
+            "useCustom": false
+          }
+        }
+      },
+      {
+        "dynamic": true,
+        "name": "Change on Ctrl+Key (Cmd on Mac)",
+        "id": "ctrlCustom",
+        "type": "untranslated",
+        "default": "0.01",
+        "max": 8,
+        "if": {
+          "settings": {
+            "useCustom": true
+          }
+        }
+      },
     {
       "dynamic": true,
       "name": "Use custom values",
@@ -169,6 +216,10 @@ const manifest = {
     },
     {
       "name": "World_Languages"
+    },
+    {
+      "name": "kalyzu",
+      "link": "https://github.com/kalyzu"
     }
   ],
   "dynamicDisable": true
