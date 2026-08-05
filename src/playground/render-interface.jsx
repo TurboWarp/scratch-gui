@@ -218,6 +218,7 @@ class Interface extends React.Component {
             isPlayerOnly,
             isRtl,
             projectId,
+            views,
             /* eslint-enable no-unused-vars */
             ...props
         } = this.props;
@@ -318,12 +319,14 @@ class Interface extends React.Component {
                                     <CloudVariableBadge />
                                 </div>
                             )}
-                            {description.instructions || description.credits ? (
+                            {description.instructions || description.credits || views || projectId !== '0' ? (
                                 <div className={styles.section}>
                                     <Description
                                         instructions={description.instructions}
                                         credits={description.credits}
                                         projectId={projectId}
+                                        totalViews={views && views.total}
+                                        firstView={views && views.first}
                                     />
                                 </div>
                             ) : null}
@@ -367,7 +370,11 @@ Interface.propTypes = {
     isLoading: PropTypes.bool,
     isPlayerOnly: PropTypes.bool,
     isRtl: PropTypes.bool,
-    projectId: PropTypes.string
+    projectId: PropTypes.string,
+    views: PropTypes.shape({
+        total: PropTypes.number,
+        first: PropTypes.instanceOf(Date)
+    })
 };
 
 const mapStateToProps = state => ({
@@ -378,7 +385,8 @@ const mapStateToProps = state => ({
     isLoading: getIsLoading(state.scratchGui.projectState.loadingState),
     isPlayerOnly: state.scratchGui.mode.isPlayerOnly,
     isRtl: state.locales.isRtl,
-    projectId: state.scratchGui.projectState.projectId
+    projectId: state.scratchGui.projectState.projectId,
+    views: state.scratchGui.tw.views
 });
 
 const mapDispatchToProps = () => ({});

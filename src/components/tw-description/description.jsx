@@ -4,6 +4,7 @@ import {FormattedMessage} from 'react-intl';
 
 import styles from './description.css';
 import reactStringReplace from 'react-string-replace';
+import {APP_NAME} from '../../lib/brand';
 
 const decorate = text => {
     // https://github.com/LLK/scratch-www/blob/25232a06bcceeaddec8fcb24fb63a44d870cf1cf/src/lib/decorate-text.jsx
@@ -41,7 +42,9 @@ const decorate = text => {
 const Description = ({
     instructions,
     credits,
-    projectId
+    projectId,
+    totalViews,
+    firstView
 }) => instructions !== 'unshared' && credits !== 'unshared' && (
     <div className={styles.description}>
         <div className={styles.projectLink}>
@@ -57,6 +60,41 @@ const Description = ({
                 />
             </a>
         </div>
+        {typeof totalViews === 'number' ? (
+            <div>
+                {totalViews === 0 ? (
+                    <FormattedMessage
+                        defaultMessage="0 views on {APP_NAME}"
+                        description="Displays how many times the project has been viewed. Special case for zero views."
+                        id="tw.views.zero"
+                        values={{
+                            APP_NAME
+                        }}
+                    />
+                ) : totalViews === 1 ? (
+                    <FormattedMessage
+                        defaultMessage="1 view on {APP_NAME}"
+                        // eslint-disable-next-line max-len
+                        description="Displays how many times the project has been viewed. Special case for one view."
+                        id="tw.views.one"
+                        values={{
+                            APP_NAME
+                        }}
+                    />
+                ) : (
+                    <FormattedMessage
+                        defaultMessage="{views} views on {APP_NAME}"
+                        // eslint-disable-next-line max-len
+                        description="Displays how many times the project has been viewed. This version is used for 2 or more views. If your language differentiates between 'few' and 'many' then go with the 'many' form since that'll be most common. {views} is number of views."
+                        id="tw.views.many"
+                        values={{
+                            views: totalViews,
+                            APP_NAME
+                        }}
+                    />
+                )}
+            </div>
+        ) : null}
         {instructions ? (
             <div>
                 <h2 className={styles.header}>
@@ -90,7 +128,9 @@ const Description = ({
 Description.propTypes = {
     instructions: PropTypes.string,
     credits: PropTypes.string,
-    projectId: PropTypes.string
+    projectId: PropTypes.string,
+    totalViews: PropTypes.number,
+    firstView: PropTypes.instanceOf(Date)
 };
 
 export default Description;

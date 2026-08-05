@@ -17,6 +17,7 @@ const SET_HAS_CLOUD_VARIABLES = 'tw/SET_HAS_CLOUD_VARIABLES';
 const SET_CLOUD_HOST = 'tw/SET_CLOUD_HOST';
 const SET_PLATFORM_MISMATCH_DETAILS = 'tw/SET_PLATFORM_MISMATCH_DETAILS';
 const SET_PROJECT_ERROR = 'tw/SET_PROJECT_ERROR';
+const SET_VIEWS = 'tw/SET_VIEWS';
 
 export const initialState = {
     framerate: 30,
@@ -52,7 +53,8 @@ export const initialState = {
         platform: null,
         callback: null
     },
-    projectError: null
+    projectError: null,
+    views: null
 };
 
 const reducer = function (state, action) {
@@ -139,6 +141,10 @@ const reducer = function (state, action) {
     case SET_PROJECT_ERROR:
         return Object.assign({}, state, {
             projectError: action.projectError
+        });
+    case SET_VIEWS:
+        return Object.assign({}, state, {
+            views: action.views
         });
     default:
         return state;
@@ -278,6 +284,23 @@ const setProjectError = function (projectError) {
     };
 };
 
+const setViews = function (total, first) {
+    return {
+        type: SET_VIEWS,
+        views: {
+            total,
+            first
+        }
+    };
+};
+
+const resetViews = function () {
+    return {
+        type: SET_VIEWS,
+        views: null
+    };
+};
+
 export {
     reducer as default,
     initialState as twInitialState,
@@ -299,5 +322,7 @@ export {
     setHasCloudVariables,
     setCloudHost,
     setPlatformMismatchDetails,
-    setProjectError
+    setProjectError,
+    setViews,
+    resetViews
 };
