@@ -48,7 +48,6 @@
     "drag-drop/@description": "Dosya yöneticinizden görselleri ve sesleri kukla bölmesine veya kostüm/ses listesine sürükleyebilmenizi sağlar. Ayrıca metin dosyalarını listelere veya \"sor ve bekle\" soru girişlerine sürükleyebilirsiniz.",
     "drag-drop/@name": "Dosya sürükleme ve bırakma",
     "drag-drop/@settings-name-use-hd-upload": "HD yüklemeleri kullan",
-    "debugger/@description": "Düzenleyiciye yeni bir \"hata ayıklayıcı\" penceresi ekler. \"günlük\", \"uyar\" ve \"hata\" bloklarını kullanarak hata ayıklayıcı penceresinin \"Günlükler\" sekmesinde kaydetmeye olanak sağlar. \"Durdurucu\" bloğu, çalıştırıldığında projeyi duraklatır. Çalışan tüm blok yığınları, hata ayıklayıcı penceresinin \"Dizeler\" sekmesinde görüntülenebilir ve duraklatıldığında, sonraki bloğu yürütmek için \"Adım\" düğmesi kullanılabilir. Saniye başına kare grafiği ve ikiz sayısı \"Performans\" sekmesinde görüntülenebilir.",
     "debugger/@name": "Hata ayıklayıcısı",
     "debugger/@settings-name-fancy_graphs": "Animasyonlu grafikler (performansı etkileyebilir)",
     "debugger/@settings-name-log_broadcasts": "Bir haber salındığında günlüğe kaydet",

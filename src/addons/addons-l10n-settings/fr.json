@@ -46,7 +46,7 @@
     "drag-drop/@description": "Vous permet de glisser des images ou des sons depuis votre explorateur de fichiers directement dans la listes des sprites, des sons et des costumes. Vous pouvez également faire glisser des fichiers texte dans les listes ou dans la boîte de dialogue \"demander et attendre\".",
     "drag-drop/@name": "Glisser-déposer de fichier",
     "drag-drop/@settings-name-use-hd-upload": "Utiliser les importations HD",
-    "debugger/@description": "Ajoute une nouvelle fenêtre \"débogueur\" à l'éditeur. Permet l'enregistrement dans l'onglet \"Logs\" de la fenêtre du débogueur en utilisant les blocs \"log\", \"warn\" et \"error\". Le bloc \"breakpoint\" met le projet en pause lorsqu'il est exécuté. Toutes les piles de blocs en cours d'exécution peuvent être visualisées dans l'onglet \"Threads\" de la fenêtre du débogueur et, en cas de pause, le bouton \"Step\" peut être utilisé pour exécuter le bloc suivant. Un graphique des images par seconde et du nombre de clones peut être visualisé dans l'onglet \"Performance\".",
+    "debugger/@name": "Débogueur",
     "debugger/@settings-name-fancy_graphs": "L'animation graphique (peut affecter les performances)",
     "debugger/@settings-name-log_broadcasts": "Enregistrer les envois de messages à tous les sprites",
     "debugger/@settings-name-log_clear_greenflag": "Effacer logs quand le drapeau vert est cliqué",

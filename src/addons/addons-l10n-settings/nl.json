@@ -49,7 +49,6 @@
     "drag-drop/@description": "Laat je afbeeldingen en geluiden slepen van je bestandsverkenner in het spritevenster of kostuum-/geluidlijst. Je kunt ook tekstbestanden naar lijsten of naar \"vraag en wacht\"-invoeren slepen.",
     "drag-drop/@name": "Bestand slepen en neerzetten",
     "drag-drop/@settings-name-use-hd-upload": "Gebruik HD-uploads",
-    "debugger/@description": "Voegt een nieuw \"debugger\"-venster toe in de editor. Je kunt loggen in het \"Logs\"-venster van de debugger met de \"log\", \"waarschuwing\" en \"error\"-blokken. Het \"onderbreking\"-blok pauzeert het project wanneer uitgevoerd. Alle uitvoerende blokkenstapels kun je zien in het \"Threads\"-venster van de debugger, en wanneer gepauzeerd kan de \"Stap\"-knop gebruikt worden om het volgende blok uit te voeren. Een grafiek van frames per seconde en aantal klonen kun je zien in het \"Prestaties\"-venster.",
     "debugger/@settings-name-fancy_graphs": "Geanimeerde grafieken (kan prestaties beïnvloeden)",
     "debugger/@settings-name-log_broadcasts": "Signalen loggen",
     "debugger/@settings-name-log_clear_greenflag": "Logs wissen op groene vlag",

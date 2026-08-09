@@ -47,7 +47,6 @@
     "drag-drop/@description": "Le permite arrastrar imágenes y sonidos de su administrador de archivos y soltarlos en el panel de objetos o la lista de disfraces/sonidos. También puede arrastrar archivos de texto a listas y cajas de respuesta.",
     "drag-drop/@name": "Arrastrar y soltar archivos",
     "drag-drop/@settings-name-use-hd-upload": "Usar subidas HD",
-    "debugger/@description": "Agrega una ventana nueva \"depurador\" al editor. Le permite loguear mensajes a la pestaña \"Logs\" de la ventana del depurador usando los bloques \"loguear\", \"advertir\" y \"error\". El bloque \"breakpoint\" pausará el proyecto cuando se ejecute. Todos las pilas de bloques en ejecución pueden ser vistos en la pestaña \"Hilos\" de la ventana del depurador y al pausarse el botón \"Paso\" puede ser usado para ejecutar el siguiente bloque. Un gráfico de fotogramas por segundo y número de clones puede ser visto en la pestaña \"Rendimiento\".",
     "debugger/@name": "Depurador",
     "debugger/@settings-name-fancy_graphs": "Gráficos animados (puede afectar rendimiento)",
     "debugger/@settings-name-log_broadcasts": "Loguear mensajes enviados",
