@@ -7,6 +7,9 @@ import VM from 'scratch-vm';
 import {injectIntl, intlShape} from 'react-intl';
 
 import ErrorBoundaryHOC from '../lib/error-boundary-hoc.jsx';
+import ProjectLoadErrorComponent, {
+    isKnownProjectLoadError
+} from '../components/tw-project-load-error/project-load-error.jsx';
 import {
     getIsError,
     getIsShowingProject
@@ -75,6 +78,14 @@ class GUI extends React.Component {
     }
     render () {
         if (this.props.isError) {
+            if (isKnownProjectLoadError(this.props.error)) {
+                return (
+                    <ProjectLoadErrorComponent
+                        error={this.props.error}
+                        isFullScreen={this.props.isFullScreen}
+                    />
+                );
+            }
             throw this.props.error;
         }
         const {

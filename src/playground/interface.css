@@ -94,24 +94,3 @@ a {
 .footer-section > * {
     margin-bottom: 10px;
 }
-
-.infobox {
-    line-height: 1.5em;
-    padding: 0.5rem;
-    margin: 5px 0 8px 0;
-    border-radius: 0.5rem;
-    border: 1px solid #b9d6ff;
-    background-color: #dbebff;
-}
-.infobox p {
-    margin: 4px 0;
-}
-.infobox a {
-    font-weight: bold;
-    text-decoration: none;
-}
-
-.unshared-update {
-    border-color: #ff52526e;
-    background-color: #ff525240;
-}

@@ -5,6 +5,7 @@ import log from './log';
 
 import {setProjectTitle} from '../reducers/project-title';
 import {setAuthor, setDescription} from '../reducers/tw';
+import {ProjectUnavailableLegalReasons} from './tw-load-project-error';
 
 export const fetchProjectMeta = async projectId => {
     // When people reopen tabs, sometimes the browser is *very* aggressive about caching even when the
@@ -22,11 +23,18 @@ export const fetchProjectMeta = async projectId => {
             if (res.ok) {
                 return data;
             }
+            if (res.status === 451) {
+                throw new ProjectUnavailableLegalReasons('Project is unavailable for legal reasons', data.url);
+            }
             if (res.status === 404) {
                 throw new Error('Project is probably unshared');
             }
             throw new Error(`Unexpected status code: ${res.status}`);
         } catch (err) {
+            // Mirror would get the same error so don't try again
+            if (err instanceof ProjectUnavailableLegalReasons) {
+                throw err;
+            }
             if (!firstError) {
                 firstError = err;
             }
@@ -84,9 +92,6 @@ const TWProjectMetaFetcherHOC = function (WrappedComponent) {
                     })
                         .catch(err => {
                             setIndexable(false);
-                            if (`${err}`.includes('unshared')) {
-                                this.props.onSetDescription('unshared', 'unshared');
-                            }
                             log.warn('cannot fetch project meta', err);
                         });
                 }

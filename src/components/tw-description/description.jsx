@@ -42,7 +42,7 @@ const Description = ({
     instructions,
     credits,
     projectId
-}) => instructions !== 'unshared' && credits !== 'unshared' && (
+}) => (
     <div className={styles.description}>
         <div className={styles.projectLink}>
             <a

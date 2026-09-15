@@ -28,8 +28,24 @@ class ProjectFetchError extends LoadProjectError {
     }
 }
 
+/**
+ * Project is unavailable for legal reasons (HTTP 451), e.g. a copyright claim.
+ */
+class ProjectUnavailableLegalReasons extends LoadProjectError {
+    /**
+     * @param {string} message Error message
+     * @param {string|null} moreUrl URL with more information about why the project is unavailable, if any.
+     */
+    constructor (message, moreUrl) {
+        super(message);
+        this.name = 'ProjectUnavailableLegalReasons';
+        this.moreUrl = moreUrl;
+    }
+}
+
 export {
     LoadProjectError,
     ProjectUnsharedError,
-    ProjectFetchError
+    ProjectFetchError,
+    ProjectUnavailableLegalReasons
 };
