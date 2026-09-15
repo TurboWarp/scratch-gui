@@ -18,18 +18,19 @@ const isSafeURL = url => {
     }
 };
 
-const Link = ({href}) => (
+const Link = ({href, children}) => (
     <a
         className={styles.link}
         href={href}
         target="_blank"
         rel="noopener noreferrer"
     >
-        {href}
+        {children || href}
     </a>
 );
 
 Link.propTypes = {
+    children: PropTypes.node,
     href: PropTypes.string.isRequired
 };
 
@@ -41,27 +42,23 @@ const UnsharedMessage = () => (
     <React.Fragment>
         <p className={styles.header}>
             <FormattedMessage
-                defaultMessage="Unshared projects are not visible."
-                description="Appears on unshared projects"
+                defaultMessage="This project is unshared."
+                description="Title of page shown when a project is unshared"
                 id="tw.unshared3.1"
             />
         </p>
         <p>
             <FormattedMessage
-                defaultMessage="For more information, visit: {link}"
-                description="Appears on unshared projects"
-                id="tw.unshared.2"
-                values={{
-                    link: <Link href={UNSHARED_DOCS} />
-                }}
+                defaultMessage="Make sure you entered the right project ID or URL."
+                description="Appears on unshared projects. People often mistype the project number."
+                id="tw.unshared.wrongId"
             />
         </p>
         <p>
             <FormattedMessage
-                // eslint-disable-next-line max-len
-                defaultMessage="If the project was shared recently, this message may appear incorrectly for up to {minutes} minutes."
+                defaultMessage="If it was shared recently, it may take up to {minutes} minutes to load here."
                 description="Appears on unshared projects. {minutes} is replaced with a number such as 30."
-                id="tw.unshared.cache2"
+                id="tw.unshared3.cache"
                 values={{
                     minutes: 30
                 }}
@@ -73,6 +70,15 @@ const UnsharedMessage = () => (
                 description="Appears on unshared projects"
                 id="tw.unshared.bug"
             />
+        </p>
+        <p>
+            <Link href={UNSHARED_DOCS}>
+                <FormattedMessage
+                    defaultMessage="Learn more about unshared projects"
+                    description="Link to documentation about unshared projects"
+                    id="tw.unshared3.learnMore"
+                />
+            </Link>
         </p>
         <button
             className={styles.button}
@@ -91,28 +97,20 @@ const UnavailableLegalReasonsMessage = ({moreUrl}) => (
     <React.Fragment>
         <p className={styles.header}>
             <FormattedMessage
-                defaultMessage="Project unavailable"
+                defaultMessage="This project is unavailable due to a copyright claim."
                 description="Title of page shown when a project is unavailable due to a copyright claim"
                 id="tw.legalReason.title"
             />
         </p>
-        <p>
-            <FormattedMessage
-                defaultMessage="This project is unavailable due to a copyright claim."
-                description="Message shown when a project is unavailable due to a copyright claim"
-                id="tw.legalReason.description"
-            />
-        </p>
         {moreUrl && isSafeURL(moreUrl) && (
             <p>
-                <FormattedMessage
-                    defaultMessage="For more information, visit: {link}"
-                    description="Appears on unshared projects"
-                    id="tw.unshared.2"
-                    values={{
-                        link: <Link href={moreUrl} />
-                    }}
-                />
+                <Link href={moreUrl}>
+                    <FormattedMessage
+                        defaultMessage="Read the notice"
+                        description="Link to the copyright notice that caused a project to be unavailable"
+                        id="tw.legalReason.notice"
+                    />
+                </Link>
             </p>
         )}
     </React.Fragment>
