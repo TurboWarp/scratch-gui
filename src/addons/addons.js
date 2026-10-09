@@ -20,7 +20,6 @@ const addons = [
     'clones',
     'mouse-pos',
     'color-picker',
-    'remove-sprite-confirm',
     'block-count',
     'onion-skinning',
     'paint-snap',
@@ -84,9 +83,7 @@ const addons = [
     'editor-stepping'
 ];
 
-const newAddons = [
-    'expanded-backpack'
-];
+const newAddons = [];
 
 // eslint-disable-next-line import/no-commonjs
 module.exports = {
