@@ -62,9 +62,11 @@ export default async function createThreadsTab({ debug, addon, console, msg }) {
       }
     }
 
+    // TW: compiler-related support
     if (row.type === "compiled") {
       const el = document.createElement('div');
       el.className = "sa-debugger-thread-compiled";
+      // TW: TODO: get infrastructure to translate this
       el.textContent = "Compiled threads can't be stepped and have no stack information.";
       root.appendChild(el);
     }
@@ -121,6 +123,7 @@ export default async function createThreadsTab({ debug, addon, console, msg }) {
             targetName: target.getName(),
             id,
           },
+          // TW: compiler-related support
           compiledItem: thread.isCompiled ? {
             type: "compiled",
             depth: 1,
@@ -153,6 +156,7 @@ export default async function createThreadsTab({ debug, addon, console, msg }) {
         }
 
         blockInfo.running =
+          // TW: compiler-related support
           thread === runningThread && (
             thread.isCompiled || (
               blockId === runningThread.peekStack() &&
@@ -184,6 +188,7 @@ export default async function createThreadsTab({ debug, addon, console, msg }) {
         }
       }
 
+      // TW: compiler-related support
       if (cacheInfo.compiledItem) {
         result.push(cacheInfo.compiledItem);
       }
@@ -215,7 +220,7 @@ export default async function createThreadsTab({ debug, addon, console, msg }) {
     }
   });
 
-  const stepButton = debug.createHeaderButton({
+  const stepButton = debug.createIconButton({
     text: msg("step"),
     icon: addon.self.getResource("/icons/step.svg") /* rewritten by pull.js */,
     description: msg("step-desc"),

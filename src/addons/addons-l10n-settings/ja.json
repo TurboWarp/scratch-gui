@@ -49,7 +49,6 @@
     "drag-drop/@description": "エディターのスプライトペインやコスチュームペインにファイルをドロップしたり、リストや「聞いて待つ」画面にテキストファイルをドロップできるようにする。",
     "drag-drop/@name": "ファイルをドロップ",
     "drag-drop/@settings-name-use-hd-upload": "HDアップロードを使用",
-    "debugger/@description": "「デバッガー」画面をエディターに追加する。「log」、「warn」、「error」ブロックでデバッガーの「ログ」タブに内容を表示する。「breakpoint」ブロックでプロジェクトを一時停止させる。デバッガー画面の「スレッド」タブで実行中のブロックを確認し、一時停止中「次に進む」を押して次のブロックを実行する。「パフォーマンス」タブでFPSとクローン数のグラフを表示する。",
     "debugger/@name": "デバッガー",
     "debugger/@settings-name-fancy_graphs": "グラフのアニメーション (パフォーマンスに影響を与えます)",
     "debugger/@settings-name-log_broadcasts": "メッセージを記録",

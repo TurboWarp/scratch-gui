@@ -7,8 +7,6 @@ const STATUS_YIELD = 2;
 const STATUS_YIELD_TICK = 3;
 const STATUS_DONE = 4;
 
-const REACT_INTERNAL_PREFIX = "__reactInternalInstance$";
-
 let vm;
 
 let paused = false;
@@ -433,4 +431,43 @@ export const setup = (addon) => {
     }
     return count;
   };
+
+  // All instances of AudioEngine use the same AudioContext by default,
+  // which means that opening the sound library resumes the VM's context. See #6847.
+  // This can be fixed by creating a separate context from the sound library.
+  addon.tab
+    .waitForElement("[class*='play-button_play-button_']", {
+      reduxEvents: ["scratch-gui/modals/OPEN_MODAL"],
+    })
+    .then(() => {
+      const soundLibrary = document.querySelector("[class*='modal_modal-content_']");
+      const reactInternalKey = addon.tab.traps.getInternalKey(soundLibrary);
+      let reactInternalInstance = soundLibrary[reactInternalKey];
+      while (!reactInternalInstance.stateNode?.audioEngine) {
+        reactInternalInstance = reactInternalInstance.return;
+      }
+      const soundLibraryInstance = reactInternalInstance.stateNode;
+      const SoundLibrary = soundLibraryInstance.constructor;
+      const AudioEngine = soundLibraryInstance.audioEngine.constructor;
+      const soundLibraryContext = new AudioContext();
+      soundLibraryInstance.audioEngine = new AudioEngine(soundLibraryContext);
+      SoundLibrary.prototype.componentDidMount = function () {
+        this.audioEngine = new AudioEngine(soundLibraryContext);
+        this.playingSoundPromise = null;
+      };
+    });
+
+  // Prevent the VM's context from being resumed while the project is paused
+  const newResume = function () {
+    if (!paused) AudioContext.prototype.resume.call(this);
+  };
+  if (vm.runtime.audioEngine) {
+    vm.runtime.audioEngine.audioContext.resume = newResume;
+  } else {
+    const originalAttachAudioEngine = vm.runtime.attachAudioEngine;
+    vm.runtime.attachAudioEngine = function (audioEngine) {
+      audioEngine.audioContext.resume = newResume;
+      return originalAttachAudioEngine.call(this, audioEngine);
+    };
+  }
 };

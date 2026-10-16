@@ -68,8 +68,6 @@
     "debugger/step": "Avançar um passo",
     "debugger/step-desc": "Executa um bloco.",
     "debugger/tab-logs": "Registros",
-    "debugger/tab-threads": "Linhas de execução",
-    "debugger/thread": "Linha de execução {id}",
     "debugger/unknown-sprite": "(ator desconhecido)",
     "debugger/unpause": "Continuar",
     "pause/pause": "Pausar",
