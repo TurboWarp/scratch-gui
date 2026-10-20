@@ -19,10 +19,6 @@ export default class Utils {
     this.offsetX = 32;
     this.offsetY = 32;
     this.navigationHistory = new NavigationHistory();
-    /**
-     * The workspace
-     */
-    this._workspace = null;
   }
 
   /**
@@ -48,13 +44,7 @@ export default class Utils {
    * @returns !Blockly.Workspace
    */
   getWorkspace() {
-    const currentWorkspace = Blockly.getMainWorkspace();
-    if (currentWorkspace.getToolbox()) {
-      // Sadly get get workspace does not always return the 'real' workspace... Not sure how to get that at the moment,
-      //  but we can work out whether it's the right one by whether it has a toolbox.
-      this._workspace = currentWorkspace;
-    }
-    return this._workspace;
+    return this.addon.tab.traps.getWorkspace();
   }
 
   /**

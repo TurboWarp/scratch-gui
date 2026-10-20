@@ -23,6 +23,9 @@ export function createTableHeader(config, msg) {
     if (className === "timing-percent-time") {
       percentHeader = span;
     }
+    if (className === "timing-total-time") {
+      span.classList.add("active-header");
+    }
   });
 
   // Mapping from table header textContent to timer keys
