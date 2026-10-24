@@ -325,6 +325,28 @@ const DisableCompiler = props => (
     />
 );
 
+const RelaxedMath = props => (
+    <BooleanSetting
+        {...props}
+        label={
+            <FormattedMessage
+                defaultMessage="Relaxed Math"
+                description="Relaxed Math setting"
+                id="tw.settingsModal.relaxedMath"
+            />
+        }
+        help={
+            <FormattedMessage
+                // eslint-disable-next-line max-len
+                defaultMessage="Makes the compiler less likely to assume a math operation is NaN. This may break projects that don't handle math carefully!"
+                description="Relaxed Math help"
+                id="tw.settingsModal.relaxedMathHelp"
+            />
+        }
+        slug="relaxed-math"
+    />
+); 
+
 const CustomStageSize = ({
     customStageSizeEnabled,
     stageWidth,
@@ -498,6 +520,10 @@ const SettingsModalComponent = props => (
             <DisableCompiler
                 value={props.disableCompiler}
                 onChange={props.onDisableCompilerChange}
+            />
+            <RelaxedMath
+                value={props.relaxedMath}
+                onChange={props.onRelaxedMathChange}
             />
             {!props.isEmbedded && (
                 <StoreProjectOptions
