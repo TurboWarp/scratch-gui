@@ -12,9 +12,17 @@ export default async function createTimingTab({ debug, addon, console, msg }) {
   const vm = addon.tab.traps.vm;
   const profilingRestartNotice = Object.assign(document.createElement("div"), {
     className: "sa-timing-restart-notice",
-    textContent: "Restart the project to begin profiling.",
     hidden: true,
   });
+  const restartProjectLink = Object.assign(document.createElement("a"), {
+    textContent: "Restart the project",
+  });
+  restartProjectLink.addEventListener("click", () => {
+    vm.stopAll();
+    vm.greenFlag();
+  });
+  // The notice is a flex container, which would collapse a normal leading space
+  profilingRestartNotice.append(restartProjectLink, "\u00A0to begin profiling.");
   const profilingUnsupportedNotice = Object.assign(document.createElement("div"), {
     className: "sa-timing-restart-notice sa-timing-unsupported-notice",
     hidden: true,
@@ -215,10 +223,7 @@ export default async function createTimingTab({ debug, addon, console, msg }) {
     exportButton.element.addEventListener("click", () => {
       if (tableRows.rows.length === 0) return;
 
-      // Average time and call count aren't measured by the sampling profiler
-      const columns = tableRows.hasSampledRows
-        ? ["label", "totalTime", "percent"]
-        : ["label", "totalTime", "avgTime", "percent", "callCount"];
+      const columns = ["label", "totalTime", "avgTime", "percent", "callCount"];
       const headerNames = {
         label: "Label",
         totalTime: "Total Time (ms)",
@@ -282,7 +287,7 @@ export default async function createTimingTab({ debug, addon, console, msg }) {
     isProfiling: false,
     showHeatmap: false,
     showRatioTime: false,
-    sortHeader: null,
+    sortHeader: "totalTime",
     sortDirection: "descending",
     currentHeatmapMax: 1.0, // Store heatmap max value for reapply operations
   };
@@ -310,7 +315,6 @@ export default async function createTimingTab({ debug, addon, console, msg }) {
 
   function updateTable() {
     tableRows.updateLogRows(timingManager.getTimers());
-    content.classList.toggle("sa-timing-sampling", tableRows.hasSampledRows);
   }
 
   // setup events
