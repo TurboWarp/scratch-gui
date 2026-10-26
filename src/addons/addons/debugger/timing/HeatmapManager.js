@@ -53,7 +53,6 @@ class HeatmapManager {
     this.realtimeUpdateInterval = null;
     this.lastHeatmapTime = 0;
     this.currentHeatmapMax = 1.0; // Store current heatmap max for real-time updates
-    this.coldBlocksColored = false; // Whether blocks without profiler data have been colored
   }
 
   showHeatmapFn(heatmapMax) {
@@ -67,7 +66,6 @@ class HeatmapManager {
   hideHeatmapFn() {
     // Stop real-time updates
     this.stopRealtimeUpdates();
-    this.coldBlocksColored = false;
 
     // Reset all previously colored blocks, not just current timer blocks
     const workspace = this.getWorkspace();
@@ -147,24 +145,10 @@ class HeatmapManager {
     if (totalTime === 0) return;
 
     const percentTimes = [...blockTimes.values()].map((time) => time / totalTime);
-    // Blocks the profiler never saw spent no time running, so the scale starts at 0
-    const min = showProfile ? 0 : Math.min(...percentTimes);
+    const min = Math.min(...percentTimes);
     const max = Math.max(...percentTimes) * heatmapMax;
 
     const workspace = this.getWorkspace();
-
-    // The cold color never changes, so real-time updates only need to apply it once
-    if (showProfile && (!onlyModified || !this.coldBlocksColored)) {
-      this.coldBlocksColored = true;
-      const coldColor = valueToHeatmapColor(0, min, max);
-      for (const block of workspace.getAllBlocks()) {
-        if (blockTimes.has(block.id) || block.isShadow()) continue;
-        // Reporters are colored along with the block they're in
-        if (block.outputConnection && block.getParent()) continue;
-        recursiveFillBlock(block, coldColor);
-        this.coloredBlocks.add(block.id);
-      }
-    }
 
     for (const [blockId, time] of blockTimes) {
       if (onlyModified && !this.modifiedTimers.has(blockId)) continue;

@@ -73,6 +73,10 @@ class TableRows extends LogView {
     } else {
       labelElem = createInfoElement(this.getRowLabel(timer));
       labelElem.classList.add("sa-timing-plain-label");
+      if (timer.helpText) {
+        labelElem.classList.add("sa-timing-help-label");
+        labelElem.title = timer.helpText;
+      }
     }
 
     const totalTime = createInfoElement("");
@@ -116,8 +120,6 @@ class TableRows extends LogView {
     this.totalTimerTime = this.getTotalTime(false);
     this.minProfileTime = this.getMinTime(true);
     this.minTimerTime = this.getMinTime(false);
-    // The sampling profiler doesn't measure average time or call count
-    this.hasSampledRows = this.rows.some((row) => row.isProfile && row.callCount === 0);
     // Stored on the row so that LogView notices when they change and calls renderRow
     for (const row of this.rows) {
       row.numbers = this.getRowNumbers(row);
