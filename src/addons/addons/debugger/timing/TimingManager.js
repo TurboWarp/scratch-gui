@@ -66,9 +66,7 @@ class TimingManager {
     if (label === this.lastTimerLabel) this.lastTimerLabel = null;
   }
 
-  // The sampling profiler only knows how much time was spent, not how many times the block ran,
-  // so its rows have a call count of 0.
-  addProfileTime(key, time, targetId, blockId, displayLabel, calls = 0) {
+  addProfileTime(key, time, targetId, blockId, displayLabel, calls = 0, helpText = null) {
     if (this.timers[key]) {
       this.timers[key].totalTime += time;
       this.timers[key].callCount += calls;
@@ -83,6 +81,7 @@ class TimingManager {
         isActive: false,
         isProfile: true,
         displayLabel,
+        helpText,
       };
     }
 

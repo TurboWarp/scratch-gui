@@ -381,7 +381,7 @@
   display: block;
 }
 
-.sa-timing-unsupported-notice a {
+.sa-timing-restart-notice a {
   color: var(--link-color);
   cursor: pointer;
 }
@@ -405,12 +405,6 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-/* The sampling profiler doesn't measure average time or call count */
-.sa-timing-sampling .sa-timing-timer > :nth-child(3),
-.sa-timing-sampling .sa-timing-timer > :nth-child(5) {
-  display: none;
 }
 
 .sa-timing-header {
@@ -442,6 +436,11 @@
   text-align: center;
   margin: 0px;
   box-sizing: border-box;
+}
+
+.sa-timing-help-label {
+  text-decoration: underline dotted;
+  cursor: help;
 }
 
 /* Tooltip container (the second item) */
