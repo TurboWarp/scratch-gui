@@ -1,3 +1,5 @@
+import {createExtensionWaitDialog} from '@kubohiroya/turbowarp-extension-security-dialog';
+
 const text = (document, tag, value, attributes = {}) => {
     const element = document.createElement(tag);
     element.textContent = value;
@@ -9,6 +11,9 @@ const text = (document, tag, value, attributes = {}) => {
 export function createPlusPermissionUI (document, locale = 'ja') {
     const japanese = locale.startsWith('ja');
     const label = (ja, en) => japanese ? ja : en;
+    // A retry blocks the whole operation, so the package says so in the middle of the screen,
+    // where the approval dialog appears too. The log below keeps the running record.
+    const waiting = createExtensionWaitDialog(document, locale);
     const pending = new Set();
     let disposed = false;
     let status;
@@ -31,7 +36,12 @@ export function createPlusPermissionUI (document, locale = 'ja') {
         document.body.appendChild(status);
     }
     const diagnostics = event => {
-        if (!log || disposed) return;
+        if (disposed) return;
+        // Any other event means the fetch resolved, one way or the other.
+        if (event.type === 'retry') {
+            waiting.show({url: event.message, attempt: event.attempt, attempts: event.attempts});
+        } else waiting.hide();
+        if (!log) return;
         const states = {
             verified: label('内容を検証済み', 'Content verified'),
             authorized: label('実行を許可済み', 'Execution approved'),
@@ -51,8 +61,6 @@ export function createPlusPermissionUI (document, locale = 'ja') {
             item.setAttribute('data-error', 'true');
             status.open = true;
         }
-        // A bounded retry waits in silence for seconds, which reads as a frozen editor.
-        if (event.type === 'retry') status.open = true;
         log.appendChild(item);
         while (log.children.length > 50) log.removeChild(log.firstChild);
     };
@@ -123,6 +131,7 @@ export function createPlusPermissionUI (document, locale = 'ja') {
         },
         dispose () {
             disposed = true;
+            waiting.dispose();
             for (const cancel of pending) cancel();
             if (status) status.remove();
         }

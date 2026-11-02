@@ -80,10 +80,10 @@ test('diagnostics are bounded text and show an explicit failure reason', () => {
     ui.dispose(); dom.window.close();
 });
 
-test('a retry names the attempt it leads to and opens the panel so the wait is not silent', () => {
+test('a retry is logged and raised to a centred dialog, and taken down when the fetch resolves', async () => {
     const {dom, document, ui} = fixture('ja');
     const status = document.querySelector('[data-testid="tw-plus-extension-status"]');
-    assert.equal(status.open, false);
+    const waiting = () => document.querySelector('[data-testid="twextsec-wait"]');
     ui.diagnostics({type: 'retry', attempt: 2, attempts: 3, message: 'https://example.org/sample.js'});
     const item = status.querySelector('li[data-event="retry"]');
     assert.match(item.textContent, /接続できませんでした。再試行しています/);
@@ -91,8 +91,26 @@ test('a retry names the attempt it leads to and opens the panel so the wait is n
     assert.match(item.textContent, /https:\/\/example\.org\/sample\.js/);
     // Retrying is not a refusal, so it must not be coloured as one.
     assert.equal(item.getAttribute('data-error'), null);
-    assert.equal(status.open, true);
+    // The corner panel stays a log. A blocked operation is said in the middle of the screen,
+    // where the approval dialog appears too, so the panel no longer opens itself for it.
+    assert.equal(status.open, false);
+    await new Promise(resolve => setTimeout(resolve, 400));
+    assert.match(waiting().textContent, /再試行しています（2\/3）/);
+    assert.match(waiting().textContent, /https:\/\/example\.org\/sample\.js/);
+    // Any other event means the fetch resolved, one way or the other.
+    ui.diagnostics({type: 'verified', id: 'sample', sha256: 'a'.repeat(64)});
+    assert.equal(waiting(), null);
     ui.dispose(); dom.window.close();
+});
+
+test('host disposal takes the wait dialog down with everything else', async () => {
+    const {dom, document, ui} = fixture('ja');
+    ui.diagnostics({type: 'retry', attempt: 2, attempts: 3, message: 'https://example.org/sample.js'});
+    await new Promise(resolve => setTimeout(resolve, 400));
+    assert.notEqual(document.querySelector('[data-testid="twextsec-wait"]'), null);
+    ui.dispose();
+    assert.equal(document.querySelector('[data-testid="twextsec-wait"]'), null);
+    dom.window.close();
 });
 
 test('an event without an attempt count reads as it did before', () => {
