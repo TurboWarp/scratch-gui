@@ -223,3 +223,16 @@ test('a transient fetch failure is reported as the attempt it leads to, and a 40
         assert.equal(answers.filter(event => event.type === 'retry').length, 0);
     } finally { await second.dispose(); answered.runtime.dispose(); }
 });
+
+test('a host fills the socket, and the GUI keeps the last word on what it passes itself', async () => {
+    const {plusHostExtras} = await import('../../../src/lib/tw-plus-host-extras.js');
+    // The stub is what the GUI uses on its own: nothing supplied, nothing changed.
+    assert.deepEqual(plusHostExtras(), {});
+
+    // A replaced module is merged under the caller's options, so a value the GUI passes itself is
+    // never silently taken over by the distributing host.
+    const supplied = {cache: {async get() { return undefined; }, async put() {}}, locale: 'en'};
+    const merged = {trustedCatalog: null, ...supplied, ...{locale: 'ja'}};
+    assert.equal(merged.cache, supplied.cache, 'what only a host can build reaches the host options');
+    assert.equal(merged.locale, 'ja', 'and what the GUI passes wins');
+});

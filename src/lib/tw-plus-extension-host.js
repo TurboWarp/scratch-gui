@@ -10,6 +10,7 @@ import {installExtensionLoader} from './tw-plus-project-loader.js';
 import {createPlusPermissionUI} from './tw-plus-permission-ui.js';
 import {createExtensionAuthoringController, setExtensionAuthoringHost} from './tw-plus-extension-authoring.js';
 import {createDigestTrustedCatalog, plusTrustedCatalog} from './tw-plus-trusted-extensions.js';
+import {plusHostExtras} from './tw-plus-host-extras.js';
 
 // Snapshot before any project is opened; later URL changes cannot toggle this host.
 const startupSearch = globalThis.location ? globalThis.location.search : '';
@@ -84,7 +85,9 @@ export function installPlusExtensionHost (vm, {
 
 export function startupPlusExtensionHost (vm, options = {}) {
     const search = options.search === undefined ? startupSearch : options.search;
-    return installPlusExtensionHost(vm, {trustedCatalog: plusTrustedCatalog, ...options,
+    // Whatever a host supplied sits under the caller's own options, so this function's callers
+    // inside the GUI keep the last word on everything they pass.
+    return installPlusExtensionHost(vm, {trustedCatalog: plusTrustedCatalog, ...plusHostExtras(), ...options,
         enabled: isExtensionLoaderEnabled(search || '')});
 }
 
