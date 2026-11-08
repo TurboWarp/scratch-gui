@@ -157,7 +157,14 @@ MonitorComponent.propTypes = {
     onSetModeToLarge: PropTypes.func,
     onSetModeToSlider: PropTypes.func,
     onSliderPromptOpen: PropTypes.func,
-    theme: PropTypes.instanceOf(Theme).isRequired
+    theme: PropTypes.instanceOf(Theme).isRequired,
+    stageSize: PropTypes.shape({
+        width: PropTypes.number,
+        height: PropTypes.number,
+        widthDefault: PropTypes.number,
+        heightDefault: PropTypes.number,
+        scale: PropTypes.number
+    }).isRequired
 };
 
 MonitorComponent.defaultProps = {

@@ -36,6 +36,7 @@ const MonitorList = props => (
                     width={monitorData.width}
                     x={monitorData.x}
                     y={monitorData.y}
+                    stageSize={props.stageSize}
                     onDragEnd={props.onMonitorChange}
                 />
             ))}
@@ -52,7 +53,8 @@ MonitorList.propTypes = {
         width: PropTypes.number,
         height: PropTypes.number,
         widthDefault: PropTypes.number,
-        heightDefault: PropTypes.number
+        heightDefault: PropTypes.number,
+        scale: PropTypes.number
     }).isRequired
 };
 
