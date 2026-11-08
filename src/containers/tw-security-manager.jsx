@@ -52,7 +52,7 @@ const embedHostsTrustedByUser = new Set();
 const isUntrustedPath = parsed => (
     // Cloudflare serves stuff on /cdn-cgi/ that we don't want to let projects access without showing
     // a permission prompt to a non-trusted domain (/cdn-cgi/trace contains IP)
-    /^\/cdn-cgi\//i.test(parsed.pathname)
+    /^\/+cdn-cgi\//i.test(parsed.pathname)
 );
 
 /**
