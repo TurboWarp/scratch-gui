@@ -148,11 +148,11 @@ export default async function ({ addon, console, msg }) {
   });
   compilerWarning.className = "sa-debugger-compiler-warning";
   // TW: TODO: translate
-  compilerWarning.textContent = "The debugger works best when the compiler is disabled.";
-  // The timing tab profiles compiled projects too, so the warning doesn't apply there.
-  let isTimingTabActive = false;
+  compilerWarning.textContent = "The threads tab works best when the compiler is disabled.";
+  // The other tabs work fine with compiled projects, so the warning only applies to threads.
+  let isThreadsTabActive = false;
   const updateCompilerWarningVisibility = () => {
-    compilerWarning.hidden = !vm.runtime.compilerOptions.enabled || isTimingTabActive;
+    compilerWarning.hidden = !vm.runtime.compilerOptions.enabled || !isThreadsTabActive;
   };
   vm.on("COMPILER_OPTIONS_CHANGED", updateCompilerWarningVisibility);
   updateCompilerWarningVisibility();
@@ -625,7 +625,7 @@ export default async function ({ addon, console, msg }) {
     }
     tab.tab.element.classList.add(selectedClass);
     activeTab = tab;
-    isTimingTabActive = tab === timingTab;
+    isThreadsTabActive = tab === threadsTab;
     updateCompilerWarningVisibility();
 
     removeAllChildren(tabContentContainer);
