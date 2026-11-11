@@ -9,6 +9,7 @@ import {showStandardAlert, showAlertWithTimeout} from '../reducers/alerts';
 import {setFileHandle} from '../reducers/tw';
 import {getIsShowingProject} from '../reducers/project-state';
 import log from '../lib/log';
+import {getShowSaveFilePicker} from '../lib/tw-file-system-access';
 
 // from sb-file-uploader-hoc.jsx
 const getProjectTitleFromFilename = fileInputFilename => {
@@ -295,9 +296,7 @@ SB3Downloader.propTypes = {
 };
 SB3Downloader.defaultProps = {
     className: '',
-    showSaveFilePicker: typeof showSaveFilePicker === 'function' && !navigator.userAgent.includes('Android') ?
-        window.showSaveFilePicker.bind(window) :
-        null
+    showSaveFilePicker: getShowSaveFilePicker()
 };
 
 const mapStateToProps = state => ({

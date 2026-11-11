@@ -6,6 +6,7 @@ import {connect} from 'react-redux';
 import log from '../lib/log';
 import sharedMessages from './shared-messages';
 import {setFileHandle, setProjectError} from '../reducers/tw';
+import {getShowOpenFilePicker} from './tw-file-system-access';
 
 import {
     LoadingStates,
@@ -288,9 +289,7 @@ const SBFileUploaderHOC = function (WrappedComponent) {
         onSetFileHandle: PropTypes.func
     };
     SBFileUploaderComponent.defaultProps = {
-        showOpenFilePicker: typeof showOpenFilePicker === 'function' && !navigator.userAgent.includes('Android') ?
-            window.showOpenFilePicker.bind(window) :
-            null
+        showOpenFilePicker: getShowOpenFilePicker()
     };
     const mapStateToProps = (state, ownProps) => {
         const loadingState = state.scratchGui.projectState.loadingState;

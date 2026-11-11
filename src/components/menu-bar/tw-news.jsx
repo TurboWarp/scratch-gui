@@ -1,12 +1,13 @@
 import React from 'react';
 import {isScratchDesktop} from '../../lib/isScratchDesktop';
+import {hasChromium157FilePickerBug} from '../../lib/tw-file-system-access';
 import CloseButton from '../close-button/close-button.jsx';
 import styles from './tw-news.css';
 
 const LOCAL_STORAGE_KEY = 'tw:closedNews';
-const NEWS_ID = 'scratch-vulnerability';
+const NEWS_ID = 'chromium-file-pickers';
 
-const newsAppliesToUser = () => false;
+const newsAppliesToUser = () => hasChromium157FilePickerBug();
 
 const NewsBody = () => (
     <div
@@ -15,18 +16,11 @@ const NewsBody = () => (
     >
         <div>
             {/* eslint-disable-next-line max-len */}
-            {'We discovered a critical vulnerability in all versions of Scratch. In the desktop app, opening a malicious project could install ransomware on your computer.'}
+            {'The latest version of Chrome and Edge has a bug that broke our open and save file dialogs.'}
         </div>
         <div>
             {/* eslint-disable-next-line max-len */}
-            {'We reported this to Scratch two years ago, but no fix has been released yet. The latest TurboWarp is not affected. '}
-            <a
-                href="https://muffin.ink/blog/scratch-vulnerability-disclosure/"
-                target="_blank"
-                rel="noreferrer"
-            >
-                {'More details on my blog.'}
-            </a>
+            {'Until they fix it, saving projects will always download a new copy of your project instead of overwriting the original file.'}
         </div>
     </div>
 );
