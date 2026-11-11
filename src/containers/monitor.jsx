@@ -227,6 +227,7 @@ class Monitor extends React.Component {
                     targetId={this.props.targetId}
                     theme={this.props.theme}
                     width={this.props.width}
+                    stageSize={this.props.stageSize}
                     onDragEnd={this.handleDragEnd}
                     onExport={isList ? this.handleExport : null}
                     onImport={isList ? this.handleImport : null}
@@ -276,7 +277,14 @@ Monitor.propTypes = {
     vm: PropTypes.instanceOf(VM),
     width: PropTypes.number,
     x: PropTypes.number,
-    y: PropTypes.number
+    y: PropTypes.number,
+    stageSize: PropTypes.shape({
+        width: PropTypes.number,
+        height: PropTypes.number,
+        widthDefault: PropTypes.number,
+        heightDefault: PropTypes.number,
+        scale: PropTypes.number
+    }).isRequired
 };
 Monitor.defaultProps = {
     theme: Theme.light
