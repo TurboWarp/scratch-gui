@@ -75,6 +75,8 @@ const compensateForTimePassedWhilePaused = (thread, pauseState) => {
   if (stackFrame && stackFrame.executionContext && stackFrame.executionContext.timer) {
     stackFrame.executionContext.timer.startTime += vm.runtime.currentMSecs - pauseState.time;
   }
+  // Restart the measurement of the time to be compensated, to prevent compensating the same thing multiple times.
+  pauseState.time = vm.runtime.currentMSecs;
 };
 
 const stepUnsteppedThreads = (lastSteppedThread) => {
@@ -314,7 +316,6 @@ export const singleStep = () => {
 
     // Make it look like no time has passed
     compensateForTimePassedWhilePaused(steppingThread, pauseState);
-    pauseState.time = vm.runtime.currentMSecs;
 
     // Execute the block
     const continueExecuting = singleStepThread(steppingThread);
