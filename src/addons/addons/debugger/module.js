@@ -292,7 +292,7 @@ const getRealStatus = (thread) => {
   return thread.status;
 };
 
-const isThreadStopped = (thread) => {
+export const isThreadStopped = (thread) => {
   const isStackEmpty = thread.stack.length === 0 || thread.stack[0]===fakeBlockIDtoPreventDespawning && thread.stack.length === 1;
   if(isStackEmpty) return true;
   const pauseState = pausedThreadState.get(thread);
