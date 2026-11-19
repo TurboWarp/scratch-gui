@@ -178,6 +178,8 @@ const singleStepThread = (thread) => {
   }
   // TW: Can't single-step compiled threads
   if (thread.isCompiled) {
+    // Do a coarse step to avoid getting out of sync with interpreted threads.
+    vm.runtime.sequencer.stepThread(thread);
     return false;
   }
 
@@ -300,10 +302,7 @@ const findNewSteppingThread = (startingIndex) => {
       // Never single-step monitor update threads.
       continue;
     }
-    // TW: Can't single-step compiled threads
-    if (possibleNewThread.isCompiled) {
-      continue;
-    }
+
     const status = getRealStatus(possibleNewThread);
     if (status === STATUS_RUNNING || status === STATUS_YIELD || status === STATUS_YIELD_TICK) {
       // Thread must not be running for single stepping to work.
