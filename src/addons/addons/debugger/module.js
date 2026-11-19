@@ -33,29 +33,37 @@ const pauseThread = (thread) => {
   };
   pausedThreadState.set(thread, pauseState);
 
-  // Pausing a thread now works by just setting its status to STATUS_PROMISE_WAIT.
-  // At the start of each frame, we make sure each paused thread is still paused.
-  // This is really the best way to implement this.
-  // Converting thread.status into a getter/setter causes Scratch's sequencer to permanently
-  //    perform significantly slower in some projects. I think this is because it causes some
-  //    very hot functions to be deoptimized.
-  // Trapping sequencer.stepThread to no-op for a paused thread causes Scratch's sequencer
-  //    to waste 24ms of CPU time every frame because it thinks a thread is running.
-  thread.status = STATUS_PROMISE_WAIT;
+  freezePausedThread(thread);
 };
 
-const ensurePausedThreadIsStillPaused = (thread) => {
+const freezePausedThread = (thread) => {
   if (thread.status === STATUS_DONE) {
     // If a paused thread is finished by single stepping, let it keep being done.
     return;
   }
   const pauseState = pausedThreadState.get(thread);
   if (pauseState) {
+    // Freezing a thread now works by just setting its status to STATUS_PROMISE_WAIT.
+    // At the start of each frame, we make sure each paused thread is still frozen.
+    // This is really the best way to implement this.
+    // Converting thread.status into a getter/setter causes Scratch's sequencer to permanently
+    //    perform significantly slower in some projects. I think this is because it causes some
+    //    very hot functions to be deoptimized.
+    // Trapping sequencer.stepThread to no-op for a paused thread causes Scratch's sequencer
+    //    to waste 24ms of CPU time every frame because it thinks a thread is running.
     if (thread.status !== STATUS_PROMISE_WAIT) {
       // We'll record the change so we can properly resume the thread, but the thread must still be paused for now.
       pauseState.status = thread.status;
       thread.status = STATUS_PROMISE_WAIT;
     }
+  }
+};
+
+const unfreezePausedThread = (thread) => {
+  const pauseState = pausedThreadState.get(thread);
+  if (pauseState) {
+    compensateForTimePassedWhilePaused(thread, pauseState);
+    thread.status = pauseState.status;
   }
 };
 
@@ -134,11 +142,7 @@ export const setPaused = (_paused) => {
     });
     vm.runtime.ioDevices.clock.resume();
     for (const thread of vm.runtime.threads) {
-      const pauseState = pausedThreadState.get(thread);
-      if (pauseState) {
-        compensateForTimePassedWhilePaused(thread, pauseState);
-        thread.status = pauseState.status;
-      }
+      unfreezePausedThread(thread);
     }
     pausedThreadState = new WeakMap();
 
@@ -257,11 +261,6 @@ const singleStepThread = (thread) => {
       enumerable: true,
       writable: true,
     });
-
-    // Strictly this doesn't seem to be necessary, but let's make sure the thread is still paused after we step it.
-    if (thread.status !== STATUS_DONE) {
-      thread.status = STATUS_PROMISE_WAIT;
-    }
   }
 };
 
@@ -311,14 +310,17 @@ const findNewSteppingThread = (startingIndex) => {
 
 export const singleStep = () => {
   if (steppingThread) {
-    const pauseState = pausedThreadState.get(steppingThread);
-    // We can assume pauseState is defined as any single stepping threads must already be paused.
-
-    // Make it look like no time has passed
-    compensateForTimePassedWhilePaused(steppingThread, pauseState);
-
-    // Execute the block
-    const continueExecuting = singleStepThread(steppingThread);
+    // Unfreeze the thread
+    unfreezePausedThread(steppingThread);
+    // Execute a block
+    let continueExecuting;
+    try {
+      continueExecuting = singleStepThread(steppingThread);
+    }
+    finally {
+      // Refreeze after executing
+      freezePausedThread(steppingThread);
+    }
 
     if (!continueExecuting) {
       // Try to move onto the next thread
@@ -385,7 +387,7 @@ export const setup = (addon) => {
   vm.runtime.sequencer.stepThreads = function () {
     if (isPaused()) {
       for (const thread of this.runtime.threads) {
-        ensurePausedThreadIsStillPaused(thread);
+        freezePausedThread(thread);
       }
     }
     return originalStepThreads.call(this);
