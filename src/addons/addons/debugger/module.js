@@ -191,7 +191,15 @@ const singleStepThread = (thread) => {
   // TW: Can't single-step compiled threads
   if (thread.isCompiled) {
     // Do a coarse step to avoid getting out of sync with interpreted threads.
-    vm.runtime.sequencer.stepThread(thread);
+    try {
+      pauseNewThreads = true;
+      vm.runtime.sequencer.activeThread = thread;
+      vm.runtime.sequencer.stepThread(thread);
+    }
+    finally {
+      pauseNewThreads = false;
+      vm.runtime.sequencer.activeThread = null;
+    }
     return false;
   }
 
