@@ -5,7 +5,7 @@ import log from './log';
 
 import {setProjectTitle} from '../reducers/project-title';
 import {setAuthor, setDescription} from '../reducers/tw';
-import {ProjectUnavailableLegalReasons} from './tw-load-project-error';
+import {ProjectUnavailableLegalReasons, ProjectUnsharedError} from './tw-load-project-error';
 
 export const fetchProjectMeta = async projectId => {
     // When people reopen tabs, sometimes the browser is *very* aggressive about caching even when the
@@ -16,27 +16,34 @@ export const fetchProjectMeta = async projectId => {
         `https://trampoline.turbowarp.xyz/api/projects/${projectId}${cacheBuster}`
     ];
     let firstError;
+
     for (const url of urls) {
         try {
             const res = await fetch(url);
-            const data = await res.json();
-            if (res.ok) {
-                return data;
+
+            if (res.status === 400 || res.status === 404) {
+                throw new ProjectUnsharedError(`Project is probably unshared or does not exist; HTTP ${res.status}`);
             }
             if (res.status === 451) {
+                // 451 should usually return a JSON, but we won't require that.
+                const data = await res.json().catch(() => ({}));
                 throw new ProjectUnavailableLegalReasons('Project is unavailable for legal reasons', data.url);
             }
-            if (res.status === 404) {
-                throw new Error('Project is probably unshared');
+            if (!res.ok) {
+                throw new Error(`Unexpected status code ${res.status}`);
             }
-            throw new Error(`Unexpected status code: ${res.status}`);
+
+            return await res.json();
         } catch (err) {
-            // Mirror would get the same error so don't try again
-            if (err instanceof ProjectUnavailableLegalReasons) {
+            if (err instanceof ProjectUnavailableLegalReasons || err instanceof ProjectUnsharedError) {
+                // Mirror would get the same error so don't try again
                 throw err;
             }
+
             if (!firstError) {
-                firstError = err;
+                firstError = new Error(`Fetching ${url} failed: ${err?.message ?? err}`, {
+                    cause: err
+                });
             }
         }
     }
