@@ -12,6 +12,7 @@ let vm;
 let paused = false;
 let pausedThreadState = new WeakMap();
 let pauseNewThreads = false;
+let preventStoppingThreads = false;
 
 let steppingThread = null;
 
@@ -192,12 +193,12 @@ const singleStepThread = (thread) => {
   if (thread.isCompiled) {
     // Do a coarse step to avoid getting out of sync with interpreted threads.
     try {
-      pauseNewThreads = true;
+      pauseNewThreads = preventStoppingThreads = true;
       vm.runtime.sequencer.activeThread = thread;
       vm.runtime.sequencer.stepThread(thread);
     }
     finally {
-      pauseNewThreads = false;
+      pauseNewThreads = preventStoppingThreads = false;
       vm.runtime.sequencer.activeThread = null;
     }
     return false;
@@ -213,7 +214,7 @@ const singleStepThread = (thread) => {
     }
   }
 
-  pauseNewThreads = true;
+  pauseNewThreads = preventStoppingThreads = true;
   vm.runtime.sequencer.activeThread = thread;
 
   /*
@@ -281,7 +282,7 @@ const singleStepThread = (thread) => {
 
     return true;
   } finally {
-    pauseNewThreads = false;
+    pauseNewThreads = preventStoppingThreads = false;
     vm.runtime.sequencer.activeThread = null;
     Object.defineProperty(thread, "blockGlowInFrame", {
       value: currentBlockId,
@@ -355,10 +356,6 @@ export const singleStep = () => {
     finally {
       // Refreeze after executing
       freezePausedThread(steppingThread);
-      // also refreeze the other threads to prevent despawning in case this step stopped some of them
-      for(const thread of vm.runtime.threads) {
-        freezePausedThread(thread);
-      }
     }
 
     if (!continueExecuting) {
@@ -430,8 +427,14 @@ export const setup = (addon) => {
       for (const thread of this.runtime.threads) {
         freezePausedThread(thread);
       }
+      preventStoppingThreads = true;
     }
-    return originalStepThreads.call(this);
+    try {
+      return originalStepThreads.call(this);
+    }
+    finally {
+      preventStoppingThreads = false;
+    }
   };
 
   // Unpause when green flag
@@ -461,6 +464,16 @@ export const setup = (addon) => {
     }
     return originalStartHats.apply(this, args);
   };
+
+  // Prevent despawning threads while paused
+  const originalRetireThread = vm.runtime.sequencer.retireThread;
+  vm.runtime.sequencer.retireThread = function(...args) {
+    const out = originalRetireThread.apply(this, args);
+    if(preventStoppingThreads) {
+      freezePausedThread(args[0]);
+    }
+    return out;
+  }
 
   // Paused threads should not be counted as running when updating GUI state.
   const originalGetMonitorThreadCount = vm.runtime._getMonitorThreadCount;
