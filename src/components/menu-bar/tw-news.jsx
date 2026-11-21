@@ -5,7 +5,7 @@ import CloseButton from '../close-button/close-button.jsx';
 import styles from './tw-news.css';
 
 const LOCAL_STORAGE_KEY = 'tw:closedNews';
-const NEWS_ID = 'chromium-file-pickers';
+const NEWS_ID = 'chromium-file-pickers-2';
 
 const newsAppliesToUser = () => hasChromium157FilePickerBug();
 
@@ -16,11 +16,11 @@ const NewsBody = () => (
     >
         <div>
             {/* eslint-disable-next-line max-len */}
-            {'The latest version of Chrome and Edge has a bug that broke our open and save file dialogs.'}
+            {'A bug in Chrome 157 and Edge 157 broke our open and save file dialogs.'}
         </div>
         <div>
             {/* eslint-disable-next-line max-len */}
-            {'Until they fix it, saving projects will always download a new copy of your project instead of overwriting the original file.'}
+            {'Until you update to 158 or newer, saving projects will always download a new copy of your project instead of overwriting the original file.'}
         </div>
     </div>
 );

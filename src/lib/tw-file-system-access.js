@@ -2,7 +2,7 @@
  * Chromium 157 on Windows cancels the new file pickers with an AbortError if the file dialog
  * fully covers the browser window (e.g. the user maximized it), even after the user picks a file.
  * Other platforms don't mark the browser window as occluded by its own file dialog.
- * Hopefully this is temporary?
+ * Fixed in Chromium 158 (crbug.com/582407452).
  * @returns {boolean} True if this browser is affected
  */
 const hasChromium157FilePickerBug = () => {
@@ -10,8 +10,7 @@ const hasChromium157FilePickerBug = () => {
         return false;
     }
     const chromeMatch = navigator.userAgent.match(/Chrome\/(\d+)/);
-    // Add an upper bound when Chrome fixes it...
-    return !!chromeMatch && Number(chromeMatch[1]) >= 157;
+    return !!chromeMatch && Number(chromeMatch[1]) === 157;
 };
 
 /**
