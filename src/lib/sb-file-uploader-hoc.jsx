@@ -27,6 +27,17 @@ import {
 } from '../reducers/menus';
 
 /**
+ * Wait for the browser to draw the current state of the page to the screen.
+ * @returns {Promise<void>} Resolves after the next frame is drawn.
+ */
+const waitForPaint = () => new Promise(resolve => {
+    // Animation frame callbacks run just before the frame is drawn, so wait for one more task.
+    requestAnimationFrame(() => setTimeout(resolve));
+    // In case we get hidden, don't wait forever for a frame that won't come.
+    setTimeout(resolve, 100);
+});
+
+/**
  * Higher Order Component to provide behavior for loading local project files into editor.
  * @param {React.Component} WrappedComponent the component to add project file loading functionality to
  * @returns {React.Component} WrappedComponent with project file loading functionality added
@@ -46,6 +57,7 @@ const SBFileUploaderHOC = function (WrappedComponent) {
                 'handleStartSelectingFileUpload',
                 'handleChange',
                 'onload',
+                'onerror',
                 'removeFileObjects'
             ]);
             // tw: We have multiple instances of this HOC alive at a time. This flag fixes issues that arise from that.
@@ -73,6 +85,7 @@ const SBFileUploaderHOC = function (WrappedComponent) {
             // create fileReader
             this.fileReader = new FileReader();
             this.fileReader.onload = this.onload;
+            this.fileReader.onerror = this.onerror;
             // tw: Use FS API when available
             if (this.props.showOpenFilePicker) {
                 (async () => {
@@ -173,6 +186,7 @@ const SBFileUploaderHOC = function (WrappedComponent) {
         handleFinishedLoadingUpload () {
             this.expectingFileUploadFinish = false;
             if (this.fileToUpload && this.fileReader) {
+                this.props.onLoadingStarted();
                 // begin to read data from the file. When finished,
                 // cues step 6 using the reader's onload callback
                 this.fileReader.readAsArrayBuffer(this.fileToUpload);
@@ -195,12 +209,17 @@ const SBFileUploaderHOC = function (WrappedComponent) {
         // file upload raw data is available in the reader
         onload () {
             if (this.fileReader) {
-                this.props.onLoadingStarted();
+                const data = this.fileReader.result;
                 const filename = this.fileToUpload && this.fileToUpload.name;
                 let loadingSuccess = false;
-                // tw: stop when loading new project
-                this.props.vm.quit();
-                this.props.vm.loadProject(this.fileReader.result)
+                // Loading can block the main thread for a long time, or could be extremely quick.
+                // So we want to make sure we show the loading screen at least briefly.
+                waitForPaint()
+                    .then(() => {
+                        // tw: stop when loading new project
+                        this.props.vm.quit();
+                        return this.props.vm.loadProject(data);
+                    })
                     .then(() => {
                         if (filename) {
                             const uploadedProjectTitle = this.getProjectTitleFromFilename(filename);
@@ -219,6 +238,16 @@ const SBFileUploaderHOC = function (WrappedComponent) {
                         // or failed, reset file objects
                         this.removeFileObjects();
                     });
+            }
+        }
+        // The file could not be read. The loading screen is already open, so it has to be closed.
+        onerror () {
+            if (this.fileReader) {
+                const error = this.fileReader.error;
+                log.error(error);
+                this.props.onLoadingFailed(error);
+                this.props.onLoadingFinished(this.props.loadingState, false);
+                this.removeFileObjects();
             }
         }
         // step 7: remove the <input> element from the DOM and clear reader and
