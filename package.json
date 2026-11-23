@@ -34,7 +34,7 @@
     "@turbowarp/jszip": "^4.0.0",
     "@turbowarp/nanolog": "^1.0.1",
     "@turbowarp/scratch-l10n": "^3.1001.0-202401241456-994097a5",
-    "@turbowarp/scratch-storage": "^2.0.0",
+    "@turbowarp/scratch-storage": "^2.2.0",
     "@turbowarp/scratch-svg-renderer": "^1.1.0",
     "@turbowarp/startaudiocontext": "^1.0.0",
     "arraybuffer-loader": "^1.0.6",
