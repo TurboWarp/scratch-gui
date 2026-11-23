@@ -1,5 +1,4 @@
 import storage from './storage';
-import md5 from 'js-md5';
 import {soundThumbnail} from './backpack/sound-payload';
 import {arrayBufferToBase64, base64ToArrayBuffer} from './tw-base64-utils';
 import {requestPersistentStorage} from './tw-persistent-storage';
@@ -166,7 +165,7 @@ const saveBackpackObject = async ({
         mime,
         name,
         bodyData,
-        bodyMD5: md5(bodyData),
+        bodyMD5: storage.md5(bodyData),
         thumbnailData: base64ToArrayBuffer(thumbnail)
     };
     let backpackItem;
