@@ -46,6 +46,8 @@ export default async function ({ addon, console }) {
 
   const updateBlockly = () => {
     blocklyInstance.Field.cacheWidths_ = {}; // Clear text width cache
+    // TW: also clear font cache
+    blocklyInstance.Field.measureFonts_ = Object.create(null);
     // If font size has changed, middle click popup needs to clear it's cache too
     clearTextWidthCache();
 
