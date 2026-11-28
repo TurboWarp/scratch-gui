@@ -40,11 +40,14 @@ class SamplingProfiler {
 
     const Sampler = vm.exports.Sampler;
     this.Sampler = Sampler;
+    const reserved = (name) => ({ label: msg(`timing-${name}`), help: msg(`timing-${name}-help`) });
     this.reservedLabels = Sampler
       ? new Map([
-          [Sampler.RUNTIME, msg("timing-runtime")],
-          [Sampler.RENDERER, msg("timing-renderer")],
-          [Sampler.WARP_TIMER, msg("timing-warp-timer")],
+          [Sampler.RUNTIME, reserved("runtime")],
+          [Sampler.RENDERER, reserved("renderer")],
+          [Sampler.WARP_TIMER, reserved("warp-timer")],
+          [Sampler.UNPROFILED, reserved("unprofiled")],
+          [Sampler.GUI_UPDATES, reserved("gui-updates")],
         ])
       : new Map();
   }
@@ -58,7 +61,8 @@ class SamplingProfiler {
     this.isProfiling = true;
 
     const sampler = this.vm.runtime.sampler;
-    sampler.setEnabled(this.Sampler.LEVEL_COMMANDS);
+    sampler.setEnabled(this.Sampler.LEVEL_COUNTS);
+    sampler.resetCounts();
 
     if (!this.workerURL) {
       this.workerURL = URL.createObjectURL(new Blob([workerSource], { type: "text/javascript" }));
@@ -81,13 +85,29 @@ class SamplingProfiler {
     if (!this.isProfiling) return;
 
     const sampler = this.vm.runtime.sampler;
+    // Counts accumulate in the VM until we read and reset them here
+    const counts = sampler.counts;
     for (const [location, time] of times) {
-      if (location >= 0) {
-        const { spriteId, blockId } = sampler.locationToBlock(location);
-        this.tm.addProfileTime(`profile:${location}`, time, spriteId, blockId);
-      } else if (this.reservedLabels.has(location)) {
-        this.tm.addProfileTime(`profile:${location}`, time, null, null, this.reservedLabels.get(location));
+      this.addLocation(location, time, counts[location]);
+    }
+
+    // Fast blocks can run many times without ever being sampled
+    for (let location = 0; location < counts.length; location++) {
+      if (counts[location] > 0 && !times.has(location)) {
+        this.addLocation(location, 0, counts[location]);
       }
+    }
+    sampler.resetCounts();
+  }
+
+  addLocation(location, time, calls) {
+    const key = `profile:${location}`;
+    if (location >= this.Sampler.FIRST_BLOCK) {
+      const { spriteId, blockId } = this.vm.runtime.sampler.locationToBlock(location);
+      this.tm.addProfileTime(key, time, spriteId, blockId, undefined, calls);
+    } else if (this.reservedLabels.has(location)) {
+      const { label, help } = this.reservedLabels.get(location);
+      this.tm.addProfileTime(key, time, null, null, label, calls, help);
     }
   }
 }
